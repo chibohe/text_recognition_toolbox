@@ -21,7 +21,7 @@ sys.path.append(os.path.abspath(os.path.join(__dir__, '..')))
 
 import torch
 from utils import save_checkpoint, load_checkpoint, RecMetric, create_module
-from character import CharacterOps
+from character import CTCLabelConverter, AttnLabelConverter
 
 
 class TrainerRec(object):
@@ -35,7 +35,10 @@ class TrainerRec(object):
         self.to_use_device = device
         self.flags = flags.Global
         self.global_state = global_state
-        self.converter = CharacterOps(flags)
+        if flags.Global.loss_type == 'ctc':
+            self.converter = CTCLabelConverter(flags)
+        else:
+            self.converter = AttnLabelConverter(flags)
 
     def train(self):
         self.metric = RecMetric(self.converter)
