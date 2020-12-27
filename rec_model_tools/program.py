@@ -119,7 +119,7 @@ def build_loss(flags):
 
 def build_trainer(model, optimizer, loss, train_loader, val_loader, \
                   device, flags, global_state):
-    if flags.Global.algorithm in ['CRNN', 'Rosetta', 'SRN']:
+    if flags.Global.algorithm in ['CRNN', 'FAN', 'SRN']:
         trainer = TrainerRec(
             device=device,
             model=model,

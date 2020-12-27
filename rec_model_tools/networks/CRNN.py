@@ -9,7 +9,7 @@ import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
 sys.path.append(os.path.abspath(os.path.join(__dir__, '../')))
-from character import CharacterOps
+from character import CTCLabelConverter
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,7 +21,7 @@ class CRNN(nn.Module):
         self.inplanes = 1 if flags.Global.image_shape[0] == 1 else 3
         self.num_inputs = flags.SeqRNN.input_size
         self.num_hiddens = flags.SeqRNN.hidden_size
-        self.converter = CharacterOps(flags)
+        self.converter = CTCLabelConverter(flags)
         self.num_classes = self.converter.char_num
 
         self.feature_extractor = BackBone(self.inplanes)

@@ -62,9 +62,13 @@ class TrainerRec(object):
                 batch_data['targets'] = targets
                 batch_data['targets_lengths'] = targets_lengths
                 batch_data['img'] = batch_data['img'].to(self.to_use_device)
+                batch_data['targets'] = batch_data['targets'].to(self.to_use_device)
                 
                 self.optimizer.zero_grad()
-                predicts = self.model.forward(batch_data['img'])
+                if self.flags.loss_type == 'ctc':
+                    predicts = self.model.forward(batch_data['img'])
+                else:
+                    predicts = self.model.forward(batch_data['img'], batch_data['targets'][:, :-1])
                 loss = self.loss_func(predicts, batch_data)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), 5)

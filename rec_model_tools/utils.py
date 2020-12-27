@@ -162,7 +162,7 @@ def weight_init(m):
 
 def get_characters(dict_path):
     character_str = ''
-    with open(dict_path, 'r') as f:
+    with open(dict_path, 'rb') as f:
         lines = f.readlines()
         for i in lines:
             tmp_char = i.decode('utf-8').strip('\n').strip('\r\n')

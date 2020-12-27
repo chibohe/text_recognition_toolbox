@@ -133,9 +133,10 @@ class AttnLabelConverter(object):
         batch_size = len(length)
         outputs = torch.LongTensor(batch_size, batch_max_length).fill_(0)
         for i in range(batch_size):
-            curr_text = list(text[i]).append('[s]')
+            curr_text = list(text[i])
+            curr_text.append('[s]')
             curr_text = [self.dict[char] for char in curr_text]
-            outputs[i, 1: len(curr_text)] = torch.LongTensor(curr_text)
+            outputs[i, 1: len(curr_text)+1] = torch.LongTensor(curr_text)
         return (outputs, torch.IntTensor(length))
 
     def decode(self, preds):
@@ -147,9 +148,9 @@ class AttnLabelConverter(object):
             text_conf.append((curr_text, prob))
         result_list = []
         for text, prob in text_conf:
-            end_index = text.find('[s]')
+            end_index = ''.join(text).find('[s]')
             text = text[: end_index]
             prob = prob[: end_index]
-            result_list.append((text, prob))
+            result_list.append((''.join(text), prob))
         return result_list
             
