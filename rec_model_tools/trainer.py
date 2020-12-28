@@ -123,7 +123,12 @@ class TrainerRec(object):
                 targets, targets_lengths = self.converter.encode(batch_data['label'])
                 batch_data['targets'] = targets
                 batch_data['targets_lengths'] = targets_lengths
-                output = self.model.forward(batch_data['img'].to(self.to_use_device))
+                batch_data['img'] = batch_data['img'].to(self.to_use_device)
+                batch_data['targets'] = batch_data['targets'].to(self.to_use_device)
+                if self.flags.loss_type == 'ctc':
+                    output = self.model.forward(batch_data['img'])
+                else:
+                    output = self.model.forward(batch_data['img'], batch_data['targets'][:, :-1])
                 loss = self.loss_func(output, batch_data)
 
                 nums += batch_data['img'].shape[0]
