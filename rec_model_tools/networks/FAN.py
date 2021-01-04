@@ -26,7 +26,7 @@ class FAN(nn.Module):
         self.num_classes = self.converter.char_num
 
         self.block = BasicBlock
-        self.layers = [1, 2, 5, 3]
+        self.layers = flags.Architecture.layers
         self.feature_extractor = ResNet(self.inplanes, self.num_inputs, self.block, self.layers)
         self.reshape_layer = ReshapeLayer()
         self.sequence_layer = Attention(self.num_inputs, self.num_hiddens, self.num_classes)

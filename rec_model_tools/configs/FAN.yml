@@ -55,6 +55,7 @@ Global:
 
 Architecture:
   function: rec_model_tools.networks.FAN,FAN
+  layers: [1, 2, 5, 3]
  
 SeqRNN:
   input_size: 512
