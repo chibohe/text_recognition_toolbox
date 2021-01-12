@@ -1,5 +1,5 @@
 TrainReader:
-  dataloader: rec_model_tools.dataset,BatchBalancedDataset
+  dataloader: dataset,BatchBalancedDataset
   select_data: '/'
   batch_ratio: '1.0'
   total_data_usage_ratio: 1.0
@@ -11,7 +11,7 @@ TrainReader:
   lmdb_sets_dir: /LegendStart/KeOCR/datasets/train_set/hukouben_train
 
 EvalReader:
-  dataloader: rec_model_tools.dataset,evaldataloader
+  dataloader: dataset,evaldataloader
   select_data: '/'
   batch_size: 2
   padding: True
@@ -20,7 +20,7 @@ EvalReader:
   lmdb_sets_dir: /LegendStart/KeOCR/datasets/test_set/hukouben_test
 
 TestReader:
-  dataloader: rec_model_tools.dataset,evaldataloader
+  dataloader: dataset,evaldataloader
   select_data: '/'
   batch_size: 64
   padding: True
@@ -54,7 +54,7 @@ Global:
 
 
 Architecture:
-  function: rec_model_tools.networks.DAN,DAN
+  function: networks.DAN,DAN
   compress_layer: False
   layers: [3, 4, 6, 6, 3]
 
@@ -63,7 +63,7 @@ CAM:
   num_channel: 512
     
 Loss:
-  function: rec_model_tools.loss,AttnLoss
+  function: loss,AttnLoss
   blank_idx: 0
 
 Optimizer:
