@@ -172,14 +172,14 @@ class ResNet(nn.Module):
         self.conv2 = nn.Conv2d(self.output_channel_blocks[1], self.output_channel_blocks[1],
                                kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(self.output_channel_blocks[1])
-        self.maxpool3 = nn.MaxPool2d(kernel_size=(2, 2), stride=(1, 2), padding=(1, 0))
+        self.maxpool3 = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 1), padding=(0, 1))
         self.layer3 = self._make_layer(block, self.output_channel_blocks[2], layers[2])
         self.conv3 = nn.Conv2d(self.output_channel_blocks[2], self.output_channel_blocks[2],
                                kernel_size=3, stride=1, padding=1, bias=False)
         self.bn3 = nn.BatchNorm2d(self.output_channel_blocks[2])
         self.layer4 = self._make_layer(block, self.output_channel_blocks[3], layers[3])
         self.conv4 = nn.Conv2d(self.output_channel_blocks[3], self.output_channel_blocks[3],
-                               kernel_size=(2, 2), stride=(1, 2), padding=(1, 0), bias=False)
+                               kernel_size=(2, 2), stride=(2, 1), padding=(0, 1), bias=False)
         self.bn4 = nn.BatchNorm2d(self.output_channel_blocks[3])
         self.conv5 = nn.Conv2d(self.output_channel_blocks[3], self.output_channel_blocks[3],
                                kernel_size=(2, 2), stride=(1, 1), padding=0, bias=False)

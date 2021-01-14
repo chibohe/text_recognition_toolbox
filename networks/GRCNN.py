@@ -50,9 +50,9 @@ class GRCNN_FeatureExtractor(nn.Module):
         self.grcl1 = GRCL(output_channels[0], output_channels[0], num_iterations=5, kernel_size=3, pad=1)
         self.maxpool2 = nn.MaxPool2d(2, 2, 0)
         self.grcl2 = GRCL(output_channels[0], output_channels[1], num_iterations=5, kernel_size=3, pad=1)
-        self.maxpool3 = nn.MaxPool2d(2, stride=(1, 2), padding=(1, 0))
+        self.maxpool3 = nn.MaxPool2d(2, stride=(2, 1), padding=(0, 1))
         self.grcl3 = GRCL(output_channels[1], output_channels[2], num_iterations=5, kernel_size=3, pad=1)
-        self.maxpool4 = nn.MaxPool2d(2, stride=(1, 2), padding=(1, 0))
+        self.maxpool4 = nn.MaxPool2d(2, stride=(2, 1), padding=(0, 1))
         self.conv2 = nn.Conv2d(output_channels[2], output_channels[3], kernel_size=(2, 2), stride=(1, 1), bias=False)
         self.bn = nn.BatchNorm2d(512)
 

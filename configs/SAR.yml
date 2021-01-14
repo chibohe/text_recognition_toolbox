@@ -1,14 +1,14 @@
 TrainReader:
   dataloader: dataset,BatchBalancedDataset
-  select_data: '/'
-  batch_ratio: '1.0'
+  select_data: 'ArT_train-LSVT_train-MTWI_train-RCTW17_train-ReCTS_train'
+  batch_ratio: '0.2-0.2-0.2-0.2-0.2'
   total_data_usage_ratio: 1.0
   padding: True
   augment: False
   batch_size: 128
   shuffle: True
-  num_workers: 8
-  lmdb_sets_dir: /LegendStart/KeOCR/datasets/train_set/hukouben_train
+  num_workers: 16
+  lmdb_sets_dir: /LegendStart/text_recognition_toolbox/datasets/scene_trainset
 
 EvalReader:
   dataloader: dataset,evaldataloader
@@ -16,8 +16,8 @@ EvalReader:
   batch_size: 128
   padding: True
   shuffle: True
-  num_workers: 8
-  lmdb_sets_dir: /LegendStart/KeOCR/datasets/test_set/hukouben_test
+  num_workers: 16
+  lmdb_sets_dir: /LegendStart/text_recognition_toolbox/datasets/scene_testset
 
 TestReader:
   dataloader: dataset,evaldataloader
@@ -41,14 +41,13 @@ Global:
   print_batch_step: 10
   save_model_dir: output/SAR
   eval_batch_step: 2000
-  image_shape: [1, 32, 384]
+  image_shape: [1, 32, 256]
   character_type: ch
   loss_type: attn
   use_space_char: false
   character_dict_path: /LegendStart/deep-text-recognition-benchmark/scene_attach_train_set/lgconti_keys_20200817.txt
   seed: 1234
-  pretrain_weights: 
-  resumed_optimizer: True
+  pretrain_weights:
   save_inference_dir:
   infer_img:
 

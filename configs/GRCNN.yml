@@ -47,8 +47,7 @@ Global:
   use_space_char: false
   character_dict_path: /LegendStart/deep-text-recognition-benchmark/scene_attach_train_set/lgconti_keys_20200817.txt
   seed: 1234
-  pretrain_weights: 
-  resumed_optimizer: True
+  pretrain_weights:
   save_inference_dir:
   infer_img:
 
