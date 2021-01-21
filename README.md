@@ -101,15 +101,15 @@ python train.py -c configs/CRNN.yml
 
 下图为各个算法在验证集上的识别率，每2000步会进行验证：
 
-![fig1](/Users/yangbitao/temp_develop/fig1.jpg)
+![fig1](figures/fig1.jpg)
 
 * 预测结果示例
 
 | 算法  | 预测结果                                                     | 备注                                                         |
 | ----- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| CRNN  | ![image-20210121152011971](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152011971.png) | 预测结果均取自验证集识别率最高的模型，<br />左边一列为预测结果，右边为标注结果 |
-| GRCNN | ![image-20210121152134249](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152134249.png) |                                                              |
-| FAN   | ![image-20210121152239497](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152239497.png) |                                                              |
-| SAR   | ![image-20210121152325124](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152325124.png) |                                                              |
-| DAN   | ![image-20210121152407344](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152407344.png) |                                                              |
+| CRNN  | ![image-20210121152011971](figures/image-20210121152011971.png) | 预测结果均取自验证集识别率最高的模型，<br />左边一列为预测结果，右边为标注结果 |
+| GRCNN | ![image-20210121152134249](figures/image-20210121152134249.png) |                                                              |
+| FAN   | ![image-20210121152239497](figures/image-20210121152239497.png) |                                                              |
+| SAR   | ![image-20210121152325124](figures/image-20210121152325124.png) |                                                              |
+| DAN   | ![image-20210121152407344](figures/image-20210121152407344.png) |                                                              |
 
