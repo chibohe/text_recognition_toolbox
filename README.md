@@ -76,4 +76,40 @@ python train.py -c configs/CRNN.yml
 
 ## 3. 实验结果
 
-有待更新
+针对目前已复现的5个算法，我用统一的数据集以及参数设定进行了实验对比，实验设定以及实验结果如下：
+
+* 实验设定
+
+| 实验设定   | 明细                                                         | 备注                                                         |
+| ---------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| 训练集     | ArT_train：44663<br />LSVT_train：218552<br />MTWI_train：79964<br />RCTW17_train：33342<br />ReCTS_train：83119 | 这5个均为开源自然场景数据集，其中做了剔除模糊数据等处理      |
+| 验证集     | ReCTS_test：9231                                             | 测试集为从ReCTS中按照9:1比例划分的验证集，注意ReCTS以水平文本居多 |
+| batch_size | 128                                                          |                                                              |
+| img_shape  | [1, 32, 256]                                                 | 尺寸进行等比例放缩，小于256的进行padding，大于256的resize至256 |
+| optimizer  | function: adam<br />base_lr: 0.001<br />momentum: 0.9<br />weight_decay: 1.0e-4 |                                                              |
+| iter       | 60000                                                        | 一共训练了60000步，每2000步会进行一次验证                    |
+
+* 实验结果
+
+| 算法  | 最高识别率 | 最大正则编辑距离 | 模型大小 |
+| ----- | ---------- | ---------------- | -------- |
+| CRNN  | 59.89      | 0.7959           | 120M     |
+| GRCNN | 70.51      | 0.8597           | 78M      |
+| FAN   | 75.78      | 0.8924           | 764M     |
+| SAR   | 78.13      | 0.9037           | 722M     |
+| DAN   | 78.99      | 0.9064           | 639M     |
+
+下图为各个算法在验证集上的识别率，每2000步会进行验证：
+
+![fig1](/Users/yangbitao/temp_develop/fig1.jpg)
+
+* 预测结果示例
+
+| 算法  | 预测结果                                                     | 备注                                                         |
+| ----- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| CRNN  | ![image-20210121152011971](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152011971.png) | 预测结果均取自验证集识别率最高的模型，<br />左边一列为预测结果，右边为标注结果 |
+| GRCNN | ![image-20210121152134249](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152134249.png) |                                                              |
+| FAN   | ![image-20210121152239497](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152239497.png) |                                                              |
+| SAR   | ![image-20210121152325124](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152325124.png) |                                                              |
+| DAN   | ![image-20210121152407344](/Users/yangbitao/Library/Application Support/typora-user-images/image-20210121152407344.png) |                                                              |
+

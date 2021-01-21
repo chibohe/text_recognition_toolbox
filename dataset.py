@@ -123,7 +123,7 @@ def evaldataloader(params):
     characters = get_characters(params.Global.character_dict_path)
 
     AlignCollate_valid = AlignCollate(imgH=imgH, imgW=imgW, keep_ratio_with_pad=keep_ratio_with_pad)
-    valid_dataset, valid_dataset_log = hierarchical_dataset(root=root, characters=characters, params=params, select_data=select_data)
+    valid_dataset, valid_dataset_log = hierarchical_dataset(root=root, characters=characters, params=params, select_data=[select_data])
     logging.info(valid_dataset_log)
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=batch_size,
@@ -195,7 +195,7 @@ class LmdbDataset(Dataset):
                     label_key = 'label-%09d'.encode() % index
                     label = txn.get(label_key).decode('utf-8')
 
-                    if len(label) > self.batch_max_length:
+                    if len(label) >= self.batch_max_length:
                         # print(f'The length of the label is longer than max_length: length
                         # {len(label)}, {label} in dataset {self.root}')
                         continue
