@@ -101,7 +101,7 @@ python predict.py -c configs/CRNN.yml
 
 | 模型                                                         | 网盘地址                                                     | 备注 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
-| 一共包含5个预训练模型：CRNN.pth, GRCNN.pth, FAN.pth, DAN.pth, SAR.pth<br />以及一个字典文件：keys.txt | 链接: https://pan.baidu.com/s/1pBw40mA3G2HYHkHqKrcxhA <br />提取码: 567g |      |
+| 一共包含5个预训练模型：CRNN.pth, GRCNN.pth, FAN.pth, DAN.pth, SAR.pth<br />以及一个字典文件：keys.txt | 链接: https://pan.baidu.com/s/1IG-1lxytrOqry9c5Nc1GzQ <br />提取码: k3ij  |      |
 
 ## 4. 实验结果
 
