@@ -2,7 +2,7 @@
 
 ## 1. 项目介绍
 
-该项目是基于pytorch深度学习框架，以统一的改写方式实现了以下5篇经典的文字识别论文，论文的详情如下。该项目会持续进行更新，欢迎大家提出问题以及对代码进行贡献。
+该项目是基于pytorch深度学习框架，以统一的改写方式实现了以下6篇经典的文字识别论文，论文的详情如下。该项目会持续进行更新，欢迎大家提出问题以及对代码进行贡献。
 
 | 模型  | 论文标题                                                     | 发表年份 | 模型方法划分                                    |
 | ----- | ------------------------------------------------------------ | -------- | ----------------------------------------------- |
@@ -11,6 +11,7 @@
 | FAN   | 《Focusing attention: Towards accurate text recognition in natural images》 | 2017     | focusing network+1D attention                   |
 | SAR   | 《Show, attend and read: A simple and strong baseline for irregular text recognition》 | 2019     | ResNet+2D attention                             |
 | DAN   | 《Decoupled attention network for text recognition》         | 2020     | FCN+convolutional alignment module              |
+| SATRN | 《On Recognizing Texts of Arbitrary Shapes with 2D Self-Attention》 | 2020     | Transformer                                     |
 
 ## 2. 如何使用
 
