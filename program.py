@@ -99,7 +99,7 @@ def build_device(flags):
     if flags.Global.use_gpu:
         os.environ["CUDA_VISIBLE_DEVICES"] = flags.Global.gpu_num
         if torch.cuda.is_available():
-            device = torch.device("cuda")
+            device = torch.device(flags.Global.device)
             gpu_count = torch.cuda.device_count()
         else:
             device = torch.device("cpu")
@@ -118,7 +118,7 @@ def build_loss(flags):
 
 def build_trainer(model, optimizer, loss, train_loader, val_loader, \
                   device, flags, global_state):
-    if flags.Global.algorithm in ['CRNN', 'FAN', 'GRCNN', 'DAN', 'SAR']:
+    if flags.Global.algorithm in ['CRNN', 'FAN', 'GRCNN', 'DAN', 'SAR', 'SATRN']:
         trainer = TrainerRec(
             device=device,
             model=model,

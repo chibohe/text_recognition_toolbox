@@ -230,16 +230,6 @@ class AttentionCell(nn.Module):
 
 
 
-if __name__ == "__main__":
-    flags = build_config()
-    test_tensor = torch.randn(10, 1, 32, 128).to(device)
-    text = torch.randint(1000, (10, 40)).to(device)
-    sar = SAR(flags).to(device)
-    outputs = sar.forward(test_tensor, text)
-    print(outputs.size())
-
-
-
 
 
             
