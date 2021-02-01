@@ -7,6 +7,7 @@ from __future__ import print_function
 from torch import nn
 import torch
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class CTCLoss(nn.Module):
     def __init__(self, params, reduction='mean'):
@@ -20,7 +21,7 @@ class CTCLoss(nn.Module):
         pred = pred.log_softmax(2)
         pred = pred.permute(1, 0, 2)
         preds_lengths = torch.tensor([pred.size(0)] * batch_size, dtype=torch.long)
-        loss = self.loss_func(pred, label.cuda(), preds_lengths.cuda(), label_length.cuda())
+        loss = self.loss_func(pred, label.to(device), preds_lengths.to(device), label_length.to(device))
         return loss
 
 

@@ -36,8 +36,11 @@ class TrainerRec(object):
         self.global_state = global_state
         if flags.Global.loss_type == 'ctc':
             self.converter = CTCLabelConverter(flags)
-        else:
+        elif flags.Global.loss_type == 'attn':
             self.converter = AttnLabelConverter(flags)
+        else:
+            raise Exception('Not implemented error!')
+
 
     def train(self):
         self.metric = RecMetric(self.converter)
@@ -57,17 +60,18 @@ class TrainerRec(object):
                 start_time = time.time()
                 batch_data = self.train_loader.get_batch()
                 cur_batch_size = batch_data['img'].shape[0]
-                targets, targets_lengths = self.converter.encode(batch_data['label'])
-                batch_data['targets'] = targets
-                batch_data['targets_lengths'] = targets_lengths
                 batch_data['img'] = batch_data['img'].to(self.to_use_device)
-                batch_data['targets'] = batch_data['targets'].to(self.to_use_device)
+                targets, targets_lengths = self.converter.encode(batch_data['label'])
+                batch_data['targets'] = targets.to(self.to_use_device)
+                batch_data['targets_lengths'] = targets_lengths.to(self.to_use_device)
                 
                 self.optimizer.zero_grad()
                 if self.flags.loss_type == 'ctc':
-                    predicts = self.model.forward(batch_data['img'])
+                    predicts = self.model(batch_data['img'])
+                elif self.flags.loss_type == 'attn':
+                    predicts = self.model(batch_data['img'], batch_data['targets'][:, :-1])
                 else:
-                    predicts = self.model.forward(batch_data['img'], batch_data['targets'][:, :-1])
+                    raise Exception('Not implemented error!')
                 loss = self.loss_func(predicts, batch_data)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.model.parameters(), 5)
@@ -125,9 +129,9 @@ class TrainerRec(object):
                 batch_data['img'] = batch_data['img'].to(self.to_use_device)
                 batch_data['targets'] = batch_data['targets'].to(self.to_use_device)
                 if self.flags.loss_type == 'ctc':
-                    output = self.model.forward(batch_data['img'])
+                    output = self.model(batch_data['img'])
                 else:
-                    output = self.model.forward(batch_data['img'], batch_data['targets'][:, :-1])
+                    output = self.model(batch_data['img'], batch_data['targets'][:, :-1])
                 loss = self.loss_func(output, batch_data)
 
                 nums += batch_data['img'].shape[0]
