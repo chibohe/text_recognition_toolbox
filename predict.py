@@ -25,24 +25,26 @@ from character import CTCLabelConverter, AttnLabelConverter
 
 class Recoginizer(object):
     def __init__(self):
-        config = build_config()
-        model = build_model(config)
-        device, gpu_count = build_device(config)
-        optimizer = build_optimizer(config, model)
+        self.config = build_config()
+        model = build_model(self.config)
+        device, gpu_count = build_device(self.config)
+        optimizer = build_optimizer(self.config, model)
         if gpu_count > 1:
             model = nn.DataParallel(model)
-        model, optimizer, global_state = build_pretrained_weights(config, model, optimizer)
+        model, optimizer, global_state = build_pretrained_weights(self.config, model, optimizer)
         self.device = device
-        if config.Global.loss_type == 'ctc':
-            self.converter = CTCLabelConverter(config)
+        if self.config.Global.loss_type == 'ctc':
+            self.converter = CTCLabelConverter(self.config)
         else:
-            self.converter = AttnLabelConverter(config)
+            self.converter = AttnLabelConverter(self.config)
         self.model = model.to(self.device)
 
-        self.keep_ratio_with_pad = config.TrainReader.padding
-        self.channel = config.Global.image_shape[0]
-        self.imgH = config.Global.image_shape[1]
-        self.imgW = config.Global.image_shape[2]
+        self.keep_ratio_with_pad = self.config.TrainReader.padding
+        self.channel = self.config.Global.image_shape[0]
+        self.imgH = self.config.Global.image_shape[1]
+        self.imgW = self.config.Global.image_shape[2]
+        self.num_steps = self.config.Global.batch_max_length + 1
+        self.is_train = self.config.Global.is_train
 
     def preprocess(self, image):
         self.transform = transforms.ToTensor()
@@ -76,7 +78,12 @@ class Recoginizer(object):
         self.model.eval()
         with torch.no_grad():
             image_tensor = image_tensor.to(self.device)
-            outputs = self.model(image_tensor)
+            if self.config.Global.loss_type == 'ctc':
+                outputs = self.model(image_tensor)
+            else:
+                pseudo_text = None
+                outputs = self.model(image_tensor, pseudo_text, self.num_steps, \
+                                     self.is_train)
             outputs = outputs.softmax(dim=2).detach().cpu().numpy()
             preds_str = self.converter.decode(outputs)
 
@@ -84,7 +91,7 @@ class Recoginizer(object):
 
     def __call__(self, image):
         image_tensor = self.preprocess(image)
-        preds_str = self.predict(image_tensor)
+        preds_str = self.predict(image_tensor)[0][0]
 
         return preds_str
 

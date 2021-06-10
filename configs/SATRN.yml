@@ -5,7 +5,7 @@ TrainReader:
   total_data_usage_ratio: 1.0
   padding: True
   augment: False
-  batch_size: 96
+  batch_size: 32
   shuffle: True
   num_workers: 16
   lmdb_sets_dir: /LegendStart/text_recognition_toolbox/datasets/scene_trainset
@@ -13,7 +13,7 @@ TrainReader:
 EvalReader:
   dataloader: dataset,evaldataloader
   select_data: '/'
-  batch_size: 96
+  batch_size: 32
   padding: True
   shuffle: True
   num_workers: 16
@@ -57,9 +57,9 @@ Architecture:
  
 Transformer:
   model_dims: 512
-  feedforward_dims: 2048
-  num_encoder: 3
-  num_decoder: 3
+  feedforward_dims: 512
+  num_encoder: 12
+  num_decoder: 6
   num_head: 8
   dropout_rate: 0.1
     

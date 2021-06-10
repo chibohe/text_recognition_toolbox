@@ -17,9 +17,18 @@ import Levenshtein
 def load_checkpoint(_model, pretrained_weights, to_use_device, _optimizer=None):
     global_state = {}
     state = torch.load(pretrained_weights, map_location=to_use_device)
-    _model.load_state_dict(state['state_dict'])
+    state_ori = state['state_dict']
+    # state_after = {}
+    # for key, value in state_ori.items():
+    #     key = key.replace('module.', '')
+    #     state_after[key] = value
+    _model.load_state_dict(state_ori)
     if _optimizer is not None:
         _optimizer.load_state_dict(state['optimizer'])
+        for state in _optimizer.state.values():
+            for k, v in state.items():
+                if torch.is_tensor(v):
+                    state[k] = v.to(to_use_device)
     if 'global_state' in state:
         global_state = state['global_state']
     
