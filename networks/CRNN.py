@@ -9,7 +9,7 @@ import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(__dir__)
 sys.path.append(os.path.abspath(os.path.join(__dir__, '../')))
-from character import CharacterOps
+from character import CTCLabelConverter
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,7 +21,7 @@ class CRNN(nn.Module):
         self.inplanes = 1 if flags.Global.image_shape[0] == 1 else 3
         self.num_inputs = flags.SeqRNN.input_size
         self.num_hiddens = flags.SeqRNN.hidden_size
-        self.converter = CharacterOps(flags)
+        self.converter = CTCLabelConverter(flags)
         self.num_classes = self.converter.char_num
 
         self.feature_extractor = BackBone(self.inplanes)
@@ -46,16 +46,22 @@ class BackBone(nn.Module):
             nn.Conv2d(self.inplanes, 64, kernel_size=3, stride=1, padding=1),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True),
             nn.Conv2d(256, 256, kernel_size=3, stride=1, padding=1),
-            nn.MaxPool2d(kernel_size=(1, 2), stride=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
             nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(512),
+            nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(512),
-            nn.MaxPool2d(kernel_size=(1, 2), stride=2),
-            nn.Conv2d(512, 512, kernel_size=(2, 2), stride=1, padding=0)
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
+            nn.Conv2d(512, 512, kernel_size=(2, 2), stride=1, padding=0),
+            nn.ReLU(inplace=True)
         )
 
     def forward(self, inputs):

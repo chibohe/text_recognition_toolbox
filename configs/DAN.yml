@@ -1,0 +1,74 @@
+TrainReader:
+  dataloader: dataset,BatchBalancedDataset
+  select_data: '/'
+  batch_ratio: '1.0'
+  total_data_usage_ratio: 1.0
+  padding: True
+  augment: False
+  batch_size: 64
+  shuffle: True
+  num_workers: 0
+  lmdb_sets_dir: /LegendStart/KeOCR/datasets/train_set/hukouben_train
+
+EvalReader:
+  dataloader: dataset,evaldataloader
+  select_data: '/'
+  batch_size: 2
+  padding: True
+  shuffle: True
+  num_workers: 0
+  lmdb_sets_dir: /LegendStart/KeOCR/datasets/test_set/hukouben_test
+
+TestReader:
+  dataloader: dataset,evaldataloader
+  select_data: '/'
+  batch_size: 64
+  padding: True
+  shuffle: True
+  num_workers: 0
+  lmdb_sets_dir: 
+
+Global:
+  algorithm: DAN
+  use_gpu: True
+  gpu_num: '0'
+  device: cuda:0
+  num_iters: 800000
+  highest_acc_save_type: False
+  data_filtering_off: False
+  resumed_optimizer: False
+  batch_max_length: 50
+  print_batch_step: 10
+  save_model_dir: output/DAN
+  eval_batch_step: 2000
+  image_shape: [1, 32, 256]
+  character_type: ch
+  loss_type: attn
+  use_space_char: false
+  character_dict_path: /LegendStart/deep-text-recognition-benchmark/scene_attach_train_set/lgconti_keys_20200817.txt
+  seed: 1234
+  pretrain_weights:
+  save_inference_dir:
+  infer_img:
+
+
+Architecture:
+  function: networks.DAN,DAN
+  compress_layer: False
+  layers: [3, 4, 6, 6, 3]
+
+CAM:
+  depth: 8
+  num_channel: 512
+    
+Loss:
+  function: loss,AttnLoss
+  blank_idx: 0
+
+Optimizer:
+  function: adam
+  base_lr: 0.001
+  momentum: 0.9
+  weight_decay: 1.0e-4
+  lr_decay_epoch: 10
+  max_epoch: 1000

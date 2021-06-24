@@ -29,7 +29,7 @@ TestReader:
   lmdb_sets_dir: 
 
 Global:
-  algorithm: CRNN
+  algorithm: FAN
   use_gpu: True
   gpu_num: '0'
   device: cuda:0
@@ -39,29 +39,29 @@ Global:
   resumed_optimizer: False
   batch_max_length: 50
   print_batch_step: 10
-  save_model_dir: output/keocr_hukouben
-  eval_batch_step: 200
+  save_model_dir: output/FAN
+  eval_batch_step: 2000
   image_shape: [1, 32, 384]
   character_type: ch
-  loss_type: ctc
+  loss_type: attn
   use_space_char: false
   character_dict_path: /LegendStart/deep-text-recognition-benchmark/scene_attach_train_set/lgconti_keys_20200817.txt
   seed: 1234
-  pretrain_weights: 
-  resumed_optimizer: True
+  pretrain_weights:
   save_inference_dir:
   infer_img:
 
 
 Architecture:
-  function: rec_model_tools.networks.CRNN,CRNN
+  function: rec_model_tools.networks.FAN,FAN
+  layers: [1, 2, 5, 3]
  
 SeqRNN:
   input_size: 512
   hidden_size: 256
     
 Loss:
-  function: rec_model_tools.loss,CTCLoss
+  function: rec_model_tools.loss,AttnLoss
   blank_idx: 0
 
 Optimizer:

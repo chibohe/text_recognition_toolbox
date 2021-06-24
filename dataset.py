@@ -21,7 +21,7 @@ import numpy as np
 from torch.utils.data import Dataset, ConcatDataset, Subset, DataLoader
 from torch._utils import _accumulate
 import torchvision.transforms as transforms
-from character import CharacterOps
+from utils import get_characters
 
 
 class BatchBalancedDataset(object):
@@ -42,8 +42,7 @@ class BatchBalancedDataset(object):
         self.imgH = params.Global.image_shape[1]
         self.imgW = params.Global.image_shape[2]
         self.workers = params.TrainReader.num_workers
-        self.converter = CharacterOps(params)
-        self.characters = self.converter.character_str
+        self.characters = get_characters(params.Global.character_dict_path)
         dashed_line = '-' * 80
         logging.info(dashed_line + '\n')
         logging.info(f'dataset_root: {self.train_data}\nopt.select_data: {self.select_data}\nopt.batch_ratio: {self.batch_ratio}\n')
@@ -121,11 +120,10 @@ def evaldataloader(params):
     imgH = params.Global.image_shape[1]
     imgW = params.Global.image_shape[2]
     num_workers = params.EvalReader.num_workers
-    converter = CharacterOps(params)
-    characters = converter.character_str
+    characters = get_characters(params.Global.character_dict_path)
 
     AlignCollate_valid = AlignCollate(imgH=imgH, imgW=imgW, keep_ratio_with_pad=keep_ratio_with_pad)
-    valid_dataset, valid_dataset_log = hierarchical_dataset(root=root, characters=characters, params=params, select_data=select_data)
+    valid_dataset, valid_dataset_log = hierarchical_dataset(root=root, characters=characters, params=params, select_data=[select_data])
     logging.info(valid_dataset_log)
     valid_loader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=batch_size,
@@ -197,7 +195,7 @@ class LmdbDataset(Dataset):
                     label_key = 'label-%09d'.encode() % index
                     label = txn.get(label_key).decode('utf-8')
 
-                    if len(label) > self.batch_max_length:
+                    if len(label) >= self.batch_max_length:
                         # print(f'The length of the label is longer than max_length: length
                         # {len(label)}, {label} in dataset {self.root}')
                         continue
