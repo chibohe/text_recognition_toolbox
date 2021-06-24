@@ -14,7 +14,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from program import build_config
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -28,7 +27,6 @@ class SAR(nn.Module):
         self.converter = AttnLabelConverter(flags)
         self.num_classes = self.converter.char_num
         self.num_steps = flags.Global.batch_max_length + 1
-        self.is_train = flags.Global.is_train
 
         self.block = BasicBlock
         self.layers = flags.Architecture.layers
@@ -36,11 +34,10 @@ class SAR(nn.Module):
         self.lstm_encoder = LSTMEncoder(self.input_size, self.en_hidden_size)
         self.lstm_decoder = LSTMDecoder(self.input_size, self.en_hidden_size, self.de_hidden_size, self.num_classes)
 
-    def forward(self, inputs, text, num_steps, is_train):
+    def forward(self, inputs):
         vis_features = self.feature_extractor(inputs)
         holistic_features = self.lstm_encoder(vis_features)
-        outputs = self.lstm_decoder(vis_features, holistic_features, text, 
-                                    num_steps=num_steps, is_train=is_train)
+        outputs = self.lstm_decoder(vis_features, holistic_features, num_steps=self.num_steps)
         return outputs
 
 
@@ -147,7 +144,7 @@ class LSTMEncoder(nn.Module):
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.sequence_cell = nn.LSTMCell(input_size, hidden_size)
-        self.avgpool = nn.AdaptiveAvgPool2d((None, 1))
+        self.avgpool = nn.AdaptiveAvgPool2d((96, 1))
 
     def forward(self, features):
         batch_size = features.size(0)
@@ -180,31 +177,21 @@ class LSTMDecoder(nn.Module):
         one_hot = one_hot.scatter_(1, input_char, 1)
         return one_hot
 
-    def forward(self, vis_features, holistic_features, text, num_steps=30, is_train=True):
+    def forward(self, vis_features, holistic_features, num_steps=30):
         batch_size = vis_features.size(0)
         hidden = holistic_features
-        if is_train:
-            num_steps = text.size(1)
-            output_hiddens = torch.FloatTensor(batch_size, num_steps, \
-                            self.input_size+self.de_hidden_size).zero_().to(device)
-            for i in range(num_steps):
-                target = self._char_one_hot(text[:, i], self.num_classes)
-                hidden = self.rnn(target, hidden)
-                g = self.attn_cell(hidden[0], vis_features)
-                output_hiddens[:, i, :] = torch.cat([hidden[0], g], dim=1)
-            probs = self.generator(output_hiddens)
-        else:
-            probs = torch.FloatTensor(batch_size, num_steps, \
-                        self.num_classes).zero_().to(device)
-            target = torch.FloatTensor(batch_size, self.num_classes).zero_().to(device)
-            for i in range(num_steps):
-                hidden = self.rnn(target, hidden)
-                g = self.attn_cell(hidden[0], vis_features)
-                concat_feature = torch.cat([hidden[0], g], dim=1)
-                prob = self.generator(concat_feature)
-                probs[:, i, :] = prob
-                _, next_input = prob.max(axis=1)
-                target = self._char_one_hot(next_input, self.num_classes)
+        
+        probs = torch.FloatTensor(batch_size, num_steps, \
+                    self.num_classes).zero_().to(device)
+        target = torch.FloatTensor(batch_size, self.num_classes).zero_().to(device)
+        for i in range(num_steps):
+            hidden = self.rnn(target, hidden)
+            g = self.attn_cell(hidden[0], vis_features)
+            concat_feature = torch.cat([hidden[0], g], dim=1)
+            prob = self.generator(concat_feature)
+            probs[:, i, :] = prob
+            _, next_input = prob.max(axis=1)
+            target = self._char_one_hot(next_input, self.num_classes)
         return probs
                 
 

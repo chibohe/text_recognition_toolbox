@@ -78,13 +78,7 @@ class Recoginizer(object):
         self.model.eval()
         with torch.no_grad():
             image_tensor = image_tensor.to(self.device)
-            if self.config.Global.loss_type == 'ctc':
-                outputs = self.model(image_tensor)
-            else:
-                pseudo_text = None
-                outputs = self.model(image_tensor, pseudo_text, self.num_steps, \
-                                     self.is_train)
-            outputs = outputs.softmax(dim=2).detach().cpu().numpy()
+            outputs = self.model(image_tensor)
             preds_str = self.converter.decode(outputs)
 
         return preds_str
