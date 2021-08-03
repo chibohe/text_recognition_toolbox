@@ -1,23 +1,23 @@
 TrainReader:
   dataloader: dataset,BatchBalancedDataset
-  select_data: 'tianchi_train'
+  select_data: 'housecert_train'
   batch_ratio: '1.0'
   total_data_usage_ratio: 1.0
   padding: True
   augment: True
-  batch_size: 256
+  batch_size: 128
   shuffle: True
   num_workers: 8
-  lmdb_sets_dir: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_train_set/
+  lmdb_sets_dir: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_train_set
 
 EvalReader:
   dataloader: dataset,evaldataloader
-  select_data: 'tianchi_test'
-  batch_size: 256
+  select_data: '/'
+  batch_size: 128
   padding: True
   shuffle: True
   num_workers: 8
-  lmdb_sets_dir: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_test_set/
+  lmdb_sets_dir: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_test_set/housecert_test
 
 TestReader:
   dataloader: dataset,evaldataloader
@@ -39,18 +39,18 @@ Global:
   resumed_optimizer: False
   batch_max_length: 50
   print_batch_step: 10
-  save_model_dir: output/SAR/tianchi_finetune_model_20210802
+  save_model_dir: output/SAR/housecert_model
   eval_batch_step: 2000
-  image_shape: [1, 64, 256]
+  image_shape: [1, 32, 384]
   character_type: ch
   loss_type: attn
-  use_space_char: True
+  use_space_char: False
   character_dict_path: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_train_set_keys/lgconti_keys_20200817.txt
   seed: 1234
-  pretrain_weights: /LegendContinue/text_recognition/text_recognition_toolbox/output/SAR/tianchi_base_20210730/iter_44000.pth
-  is_train: True
+  pretrain_weights: /LegendContinue/text_recognition/text_recognition_toolbox/output/SAR/housecert_model/iter_26000.pth
+  is_train: False
   save_inference_dir: 
-  infer_img:
+  infer_img: ./housecert_fangzuzuoluo_badcase/
 
 
 Architecture:
