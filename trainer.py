@@ -40,6 +40,7 @@ class TrainerRec(object):
             self.converter = AttnLabelConverter(flags)
         else:
             raise Exception('Not implemented error!')
+        logging.info(self.flags)
 
 
     def train(self):
