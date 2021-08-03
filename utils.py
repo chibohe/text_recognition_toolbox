@@ -176,6 +176,7 @@ def get_characters(dict_path):
         for i in lines:
             tmp_char = i.decode('utf-8').strip('\n').strip('\r\n')
             character_str += tmp_char
+    character_str += " "
     
     return character_str
 
