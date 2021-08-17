@@ -45,11 +45,12 @@ Global:
   character_type: ch
   loss_type: attn
   use_space_char: false
-  character_dict_path: /LegendStart/deep-text-recognition-benchmark/scene_attach_train_set/lgconti_keys_20200817.txt
+  character_dict_path: /LegendContinue/text_recognition/deep-text-recognition-benchmark/scene_attach_train_set_keys/lgconti_keys_20200817.txt
   seed: 1234
-  pretrain_weights:
+  pretrain_weights: /LegendContinue/text_recognition/text_recognition_toolbox/output/DAN/best_acc.pth
+  is_train: False
   save_inference_dir:
-  infer_img:
+  infer_img: ./housecert_fangzuzuoluo_badcase/
 
 
 Architecture:

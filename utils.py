@@ -20,7 +20,7 @@ def load_checkpoint(_model, pretrained_weights, to_use_device, _optimizer=None):
     state_ori = state['state_dict']
     state_after = {}
     for key, value in state_ori.items():
-        key = key.replace('module.', '')
+        key = key[7:]
         state_after[key] = value
     _model.load_state_dict(state_after)
     if _optimizer is not None:

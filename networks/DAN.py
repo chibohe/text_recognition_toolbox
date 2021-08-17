@@ -31,6 +31,8 @@ class DAN(nn.Module):
         self.num_channel = flags.CAM.num_channel
         self.converter = AttnLabelConverter(flags)
         self.num_class = self.converter.char_num
+        self.num_steps = flags.Global.batch_max_length
+        self.is_train = flags.Global.is_train
 
         self.feature_extractor = ResNet(self.inplanes, self.block, self.strides,
                                         self.layers, self.compress_layer)
@@ -42,7 +44,8 @@ class DAN(nn.Module):
     def forward(self, inputs, text):
         output_features = self.feature_extractor(inputs)
         x = self.cam_module(output_features)
-        outputs = self.decoder(output_features[-1], x, text)
+        outputs = self.decoder(output_features[-1], x, text, 
+                               num_steps=self.num_steps, is_train=self.is_train)
         return outputs
 
 
@@ -270,7 +273,7 @@ class DTD(nn.Module):
         one_hot = one_hot.scatter_(1, input_char, 1)
         return one_hot
 
-    def forward(self, feature, A, text, test = False):
+    def forward(self, feature, A, text, num_steps=30, is_train=True):
         nB, nC, nH, nW = feature.size()
         nT = A.size()[1]
         # Normalize
@@ -281,7 +284,7 @@ class DTD(nn.Module):
         self.pre_lstm.flatten_parameters()
         C, _ = self.pre_lstm(C)
         C = F.dropout(C, p = 0.3, training=self.training)
-        if not test:
+        if is_train:
             num_steps = text.size(1)
 
             gru_res = torch.zeros(nB, num_steps, self.nchannel).type_as(C.data)        
@@ -294,12 +297,13 @@ class DTD(nn.Module):
                 gru_res[:, i, :] = hidden
             probs = self.generator(gru_res)
         else:
-            targets = torch.FloatTensor(nB, self.num_classes).zero_().type_as(C.data)
+            targets = torch.FloatTensor(nB).zero_().type_as(C.data)
             probs = torch.FloatTensor(nB, num_steps, self.num_classes).zero_().type_as(C.data)
+            hidden = torch.FloatTensor(nB, self.nchannel).zero_().type_as(C.data)
 
             for i in range(num_steps):
-                one_hot = self._char_one_hot(targets, self.num_classes)
-                hidden = self.rnn(torch.cat((C[:, i, :], prev_emb), dim = 1),
+                one_hot = self._char_one_hot(targets.long(), self.num_classes)
+                hidden = self.rnn(torch.cat((C[:, i, :], one_hot), dim = 1),
                                  hidden)
                 prob = self.generator(hidden)
                 probs[:, i, :] = prob

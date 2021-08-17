@@ -29,8 +29,6 @@ class Recoginizer(object):
         model = build_model(self.config)
         device, gpu_count = build_device(self.config)
         optimizer = build_optimizer(self.config, model)
-        if gpu_count > 1:
-            model = nn.DataParallel(model)
         model, optimizer, global_state = build_pretrained_weights(self.config, model, optimizer)
         self.device = device
         if self.config.Global.loss_type == 'ctc':
@@ -44,7 +42,6 @@ class Recoginizer(object):
         self.imgH = self.config.Global.image_shape[1]
         self.imgW = self.config.Global.image_shape[2]
         self.num_steps = self.config.Global.batch_max_length + 1
-        self.is_train = self.config.Global.is_train
 
     def preprocess(self, image):
         self.transform = transforms.ToTensor()
